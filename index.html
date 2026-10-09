@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TSI — Tesla Super Intelligence</title>
+  <meta name="description" content="Tesla Super Intelligence (TSI) is an Ethereum meme coin. Contract: 0xtesla.">
+  <meta name="theme-color" content="#070708">
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700&family=Unbounded:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070708;
+      --bg-2: #101114;
+      --card: rgba(16, 16, 18, 0.72);
+      --red: #e10600;
+      --red-2: #ff3b30;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+      --line: rgba(255, 255, 255, 0.1);
+      --font-d: "Unbounded", sans-serif;
+      --font-b: "Outfit", sans-serif;
+      --font-m: "JetBrains Mono", ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-b);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font-family: inherit; cursor: pointer; }
+
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse at 50% 20%, #000 10%, transparent 70%);
+    }
+    #net {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .wrap {
+      width: min(1140px, calc(100% - 40px));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(16px);
+      background: rgba(7, 7, 8, 0.72);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s ease;
+    }
+    nav.scrolled { border-bottom-color: var(--line); }
+    .nav-inner {
+      width: min(1140px, calc(100% - 40px));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 76px;
+      gap: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-d);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      font-size: 14px;
+    }
+    .brand img {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      box-shadow: 0 0 18px rgba(225, 6, 0, 0.45);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--text);
+      color: #111;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: 0.04em;
+    }
+    .nav-cta:hover { background: #fff; }
+    .menu-btn {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--text);
+    }
+    .menu-btn span {
+      display: block;
+      width: 18px;
+      height: 1.5px;
+      background: currentColor;
+      margin: 5px auto;
+    }
+
+    .hero {
+      position: relative;
+      z-index: 1;
+      padding: 48px 0 28px;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 48px;
+      align-items: center;
+      min-height: calc(100vh - 120px);
+    }
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-m);
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--red-2);
+      margin-bottom: 18px;
+    }
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--red-2);
+      box-shadow: 0 0 12px var(--red-2);
+      animation: blink 1.8s ease-in-out infinite;
+    }
+    h1.name {
+      font-family: var(--font-d);
+      font-weight: 500;
+      font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+      letter-spacing: -0.03em;
+      color: #e4e4e7;
+      margin-bottom: 8px;
+    }
+    .ticker {
+      font-family: var(--font-d);
+      font-weight: 800;
+      font-size: clamp(4.6rem, 12vw, 8.6rem);
+      line-height: 0.86;
+      letter-spacing: -0.06em;
+      margin-bottom: 22px;
+    }
+    .ticker span { color: var(--red-2); }
+    .lede {
+      max-width: 520px;
+      color: var(--muted);
+      font-size: 1.12rem;
+      font-weight: 300;
+      margin-bottom: 28px;
+    }
+    .ca {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(225, 6, 0, 0.45);
+      border-radius: 16px;
+      padding: 10px 10px 10px 16px;
+      max-width: 520px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 0 40px rgba(225,6,0,0.12);
+    }
+    .ca-meta { min-width: 0; flex: 1; }
+    .ca-label {
+      font-family: var(--font-m);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+    }
+    .ca-value {
+      font-family: var(--font-m);
+      font-size: 1.15rem;
+      letter-spacing: 0.04em;
+      word-break: break-all;
+    }
+    .copy-btn, .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-weight: 650;
+      font-size: 14px;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    .copy-btn {
+      background: var(--red);
+      color: white;
+      white-space: nowrap;
+    }
+    .copy-btn:hover, .btn.primary:hover { background: #ff1a12; }
+    .copy-btn:active, .btn:active { transform: translateY(1px); }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 12px 18px;
+    }
+    .btn.primary { background: var(--red); color: white; }
+    .btn.ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+    .btn.ghost:hover { border-color: rgba(255,255,255,0.28); }
+
+    .mark {
+      position: relative;
+      width: min(380px, 100%);
+      margin-left: auto;
+      aspect-ratio: 1;
+    }
+    .mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 28px;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 30px 90px rgba(225, 6, 0, 0.35);
+    }
+    .halo {
+      position: absolute;
+      inset: 8%;
+      background: radial-gradient(circle, rgba(225,6,0,0.55), transparent 68%);
+      filter: blur(20px);
+      z-index: 0;
+    }
+    .ring {
+      position: absolute;
+      inset: -28px;
+      border-radius: 50%;
+      border: 1px dashed rgba(255, 59, 48, 0.55);
+      animation: spin 28s linear infinite;
+      z-index: 1;
+    }
+    .ring.inner {
+      inset: -10px;
+      border-style: solid;
+      border-color: rgba(255,255,255,0.08);
+      animation-duration: 18s;
+      animation-direction: reverse;
+    }
+    .corner {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      z-index: 3;
+      border-color: #fff;
+      border-style: solid;
+    }
+    .corner.tl { top: -12px; left: -12px; border-width: 2px 0 0 2px; }
+    .corner.tr { top: -12px; right: -12px; border-width: 2px 2px 0 0; }
+    .corner.bl { bottom: -12px; left: -12px; border-width: 0 0 2px 2px; }
+    .corner.br { bottom: -12px; right: -12px; border-width: 0 2px 2px 0; }
+
+    .status {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      max-width: 520px;
+    }
+    .status div {
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+    }
+    .status small {
+      display: block;
+      font-family: var(--font-m);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .status strong { font-weight: 600; font-size: 15px; }
+
+    .marquee {
+      position: relative;
+      z-index: 1;
+      background: var(--red);
+      color: white;
+      overflow: hidden;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      border-bottom: 1px solid rgba(0,0,0,0.25);
+    }
+    .marquee-track {
+      display: flex;
+      gap: 32px;
+      width: max-content;
+      padding: 14px 0;
+      animation: ticker 26s linear infinite;
+      font-family: var(--font-d);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      font-size: 13px;
+    }
+    .marquee-track span { white-space: nowrap; }
+
+    section { position: relative; z-index: 1; padding: 96px 0; }
+    .section-head { margin-bottom: 36px; max-width: 680px; }
+    h2 {
+      font-family: var(--font-d);
+      font-weight: 700;
+      font-size: clamp(2rem, 4vw, 3.3rem);
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin-bottom: 12px;
+    }
+    .section-head p { color: var(--muted); font-size: 1.05rem; }
+
+    .about {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 28px;
+      backdrop-filter: blur(10px);
+    }
+    .panel p + p { margin-top: 14px; color: var(--muted); }
+    .shot {
+      position: relative;
+      border-radius: 22px;
+      overflow: hidden;
+      min-height: 320px;
+      border: 1px solid var(--line);
+    }
+    .shot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      min-height: 320px;
+    }
+    .shot figcaption {
+      position: absolute;
+      left: 14px;
+      bottom: 14px;
+      font-family: var(--font-m);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 8px 10px;
+      border-radius: 999px;
+      backdrop-filter: blur(8px);
+    }
+
+    .specs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+    .spec {
+      padding: 22px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+      border: 1px solid var(--line);
+    }
+    .spec em {
+      font-style: normal;
+      font-family: var(--font-m);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--red-2);
+    }
+    .spec strong {
+      display: block;
+      margin-top: 18px;
+      font-family: var(--font-d);
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      word-break: break-word;
+    }
+    .spec span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      counter-reset: step;
+    }
+    .step {
+      padding: 22px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: #0c0c0e;
+      min-height: 210px;
+    }
+    .step b {
+      display: block;
+      font-family: var(--font-m);
+      color: var(--red-2);
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      margin-bottom: 24px;
+    }
+    .step h3 {
+      font-size: 1.2rem;
+      font-weight: 650;
+      margin-bottom: 8px;
+    }
+    .step p { color: var(--muted); font-size: 0.95rem; }
+
+    .showroom figure {
+      margin-top: 8px;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid rgba(225, 6, 0, 0.35);
+      box-shadow: 0 40px 120px rgba(225, 6, 0, 0.18);
+    }
+    .showroom img {
+      width: 100%;
+      height: min(520px, 58vw);
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .mosaic {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .mosaic .shot { min-height: 260px; }
+    .mosaic .shot img { min-height: 260px; }
+
+    .roadmap {
+      display: grid;
+      gap: 0;
+      border-top: 1px solid var(--line);
+    }
+    .phase {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 20px;
+      padding: 26px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .phase strong {
+      font-family: var(--font-m);
+      color: var(--red-2);
+      letter-spacing: 0.08em;
+    }
+    .phase h3 { font-size: 1.35rem; font-weight: 650; margin-bottom: 4px; }
+    .phase p { color: var(--muted); max-width: 640px; }
+
+    .cta {
+      text-align: center;
+      padding: 40px 20px 48px;
+      border-radius: 28px;
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(600px 220px at 50% 0%, rgba(225,6,0,0.28), transparent 70%),
+        #0c0c0e;
+    }
+    .cta img {
+      width: 72px;
+      height: 72px;
+      border-radius: 16px;
+      margin: 0 auto 18px;
+      box-shadow: 0 0 30px rgba(225,6,0,0.45);
+    }
+    .cta h2 { margin-bottom: 8px; }
+    .cta p { color: var(--muted); margin-bottom: 22px; }
+    .cta .actions { justify-content: center; }
+
+    footer {
+      position: relative;
+      z-index: 1;
+      padding: 28px 0 48px;
+      color: #71717a;
+      font-size: 13px;
+    }
+    footer .wrap {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--line);
+      padding-top: 22px;
+    }
+    footer p { max-width: 760px; }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #fff;
+      color: #111;
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-weight: 650;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.25s ease;
+      z-index: 50;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes ticker { to { transform: translateX(-50%); } }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid, .about, .specs, .steps, .mosaic, .phase {
+        grid-template-columns: 1fr;
+      }
+      .mark { margin: 10px auto 0; width: min(300px, 86vw); }
+      .hero-grid { min-height: auto; padding-bottom: 20px; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 76px;
+        left: 0;
+        right: 0;
+        background: rgba(7,7,8,0.96);
+        border-bottom: 1px solid var(--line);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px 22px 22px;
+        gap: 16px;
+      }
+      .nav-links.open { display: flex; }
+      .menu-btn { display: inline-block; }
+      .nav-cta { display: none; }
+      .status { grid-template-columns: 1fr 1fr 1fr; }
+      section { padding: 72px 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="net" aria-hidden="true"></canvas>
+  <div class="grid-bg" aria-hidden="true"></div>
+
+  <nav id="nav">
+    <div class="nav-inner">
+      <a class="brand" href="#top">
+        <img src="logo.png" alt="TSI logo">
+        TSI
+      </a>
+      <div class="nav-links" id="links">
+        <a href="#about">About</a>
+        <a href="#token">Token</a>
+        <a href="#buy">Buy</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="https://x.com/TeslaSI_X" target="_blank" rel="noopener noreferrer">X</a>
+      </div>
+      <a class="nav-cta" href="https://x.com/TeslaSI_X" target="_blank" rel="noopener noreferrer">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        @TeslaSI_X
+      </a>
+      <button class="menu-btn" id="menu" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <header class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="kicker"><span class="dot"></span> Ethereum · AI meme · core online</p>
+        <h1 class="name">Tesla Super Intelligence</h1>
+        <p class="ticker"><span>$</span>TSI</p>
+        <p class="lede">A machine-minded meme on Ethereum. One red mark, one contract, and a timeline that drives itself.</p>
+        <div class="ca">
+          <div class="ca-meta">
+            <div class="ca-label">Contract</div>
+            <div class="ca-value" id="ca">0xtesla</div>
+          </div>
+          <button class="copy-btn" id="copy" type="button">Copy CA</button>
+        </div>
+        <div class="actions">
+          <a class="btn primary" href="https://x.com/TeslaSI_X" target="_blank" rel="noopener noreferrer">Follow on X</a>
+          <a class="btn ghost" href="#buy">How to buy</a>
+        </div>
+        <div class="status">
+          <div><small>Chain</small><strong>Ethereum</strong></div>
+          <div><small>Ticker</small><strong>TSI</strong></div>
+          <div><small>Signal</small><strong id="signal">Learning</strong></div>
+        </div>
+      </div>
+      <div class="mark">
+        <div class="halo"></div>
+        <div class="ring"></div>
+        <div class="ring inner"></div>
+        <span class="corner tl"></span>
+        <span class="corner tr"></span>
+        <span class="corner bl"></span>
+        <span class="corner br"></span>
+        <img src="logo.png" alt="Tesla Super Intelligence logo">
+      </div>
+    </div>
+  </header>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>TESLA SUPER INTELLIGENCE</span><span>$TSI</span><span>ETHEREUM</span><span>0xtesla</span><span>AI MEME</span>
+      <span>TESLA SUPER INTELLIGENCE</span><span>$TSI</span><span>ETHEREUM</span><span>0xtesla</span><span>AI MEME</span>
+      <span>TESLA SUPER INTELLIGENCE</span><span>$TSI</span><span>ETHEREUM</span><span>0xtesla</span><span>AI MEME</span>
+      <span>TESLA SUPER INTELLIGENCE</span><span>$TSI</span><span>ETHEREUM</span><span>0xtesla</span><span>AI MEME</span>
+    </div>
+  </div>
+
+  <section id="about">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">About the core</p>
+        <h2>Intelligence with a ticker.</h2>
+        <p>TSI is the Ethereum meme for a future that looks like a machine and moves like a joke that got too fast.</p>
+      </div>
+      <div class="about">
+        <div class="panel">
+          <p>Tesla Super Intelligence puts the red sigil on-chain. No pretend company. No hidden dashboard. The contract is <strong>0xtesla</strong>, the conversation lives on X, and the rest is whatever the holders make of it.</p>
+          <p>Think of it as autopilot for attention: a clean mark, a short name, and a network that does not blink. Paste the contract. Follow the signal. Leave the noise behind.</p>
+          <div class="actions">
+            <button class="btn primary" id="copy2" type="button">Copy 0xtesla</button>
+            <a class="btn ghost" href="https://x.com/TeslaSI_X" target="_blank" rel="noopener noreferrer">@TeslaSI_X</a>
+          </div>
+        </div>
+        <figure class="shot">
+          <img src="meme/78fe6acd0222536dd3140be598954e89.webp" alt="Glass candlesticks with the TSI mark">
+          <figcaption>Structure · ETH</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="token" style="padding-top: 10px;">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">Spec sheet</p>
+        <h2>Built to be read in one glance.</h2>
+      </div>
+      <div class="specs">
+        <article class="spec">
+          <em>Name</em>
+          <strong>Tesla Super Intelligence</strong>
+          <span>The full designation.</span>
+        </article>
+        <article class="spec">
+          <em>Ticker</em>
+          <strong>$TSI</strong>
+          <span>Say it short. Trade it loud.</span>
+        </article>
+        <article class="spec">
+          <em>Network</em>
+          <strong>Ethereum</strong>
+          <span>ERC-20 meme. Mainnet.</span>
+        </article>
+        <article class="spec">
+          <em>Contract</em>
+          <strong>0xtesla</strong>
+          <span>Copy it. Paste it. Verify it.</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="buy">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">How to buy</p>
+        <h2>Four moves. Then you’re in.</h2>
+        <p>Use a wallet you control. Never share a seed phrase with anyone, including this site.</p>
+      </div>
+      <div class="steps">
+        <article class="step">
+          <b>01</b>
+          <h3>Get a wallet</h3>
+          <p>Install MetaMask or another Ethereum wallet and keep the recovery phrase offline.</p>
+        </article>
+        <article class="step">
+          <b>02</b>
+          <h3>Add ETH</h3>
+          <p>Buy a little ether for the swap and a little more for gas. Send it to your own wallet.</p>
+        </article>
+        <article class="step">
+          <b>03</b>
+          <h3>Paste the CA</h3>
+          <p>Open Uniswap, choose Ethereum, and import the token with contract <strong>0xtesla</strong>.</p>
+        </article>
+        <article class="step">
+          <b>04</b>
+          <h3>Swap</h3>
+          <p>Trade ETH for TSI, confirm the contract matches, and sign the transaction yourself.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="showroom" id="mark">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">The mark</p>
+        <h2>Red. Wide. Impossible to miss.</h2>
+        <p>The banner is the whole mood: one field of red, one white sigil, zero clutter.</p>
+      </div>
+      <figure>
+        <img src="banner.png" alt="Tesla Super Intelligence banner">
+      </figure>
+      <div class="mosaic">
+        <figure class="shot">
+          <img src="meme/Tesla-stock-3.webp" alt="Red TSI mark in front of a market board">
+          <figcaption>Signal on the board</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="logo.png" alt="TSI logo" style="object-fit: cover;">
+          <figcaption>Logo</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="roadmap">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="kicker">The drive</p>
+        <h2>Where the car is pointed.</h2>
+      </div>
+      <div class="roadmap">
+        <article class="phase">
+          <strong>01</strong>
+          <div>
+            <h3>Ignition</h3>
+            <p>Site live. Contract published as 0xtesla. X account open at @TeslaSI_X.</p>
+          </div>
+        </article>
+        <article class="phase">
+          <strong>02</strong>
+          <div>
+            <h3>Signal</h3>
+            <p>Memes, replies, and a timeline that learns the ticker. The community writes the voice.</p>
+          </div>
+        </article>
+        <article class="phase">
+          <strong>03</strong>
+          <div>
+            <h3>Cruise</h3>
+            <p>More art, more holders, more noise in the right places. The mark stays simple.</p>
+          </div>
+        </article>
+        <article class="phase">
+          <strong>04</strong>
+          <div>
+            <h3>Horizon</h3>
+            <p>Wherever the holders point it. Super intelligence is a crowd with a contract.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="cta">
+        <img src="logo.png" alt="">
+        <p class="kicker" style="justify-content:center;">Community channel</p>
+        <h2>Follow the build.</h2>
+        <p>The only social for Tesla Super Intelligence is on X.</p>
+        <div class="actions">
+          <a class="btn primary" href="https://x.com/TeslaSI_X" target="_blank" rel="noopener noreferrer">x.com/TeslaSI_X</a>
+          <button class="btn ghost" id="copy3" type="button">Copy contract</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <p>Tesla Super Intelligence (TSI) is an unofficial community meme token on Ethereum. It is not affiliated with, endorsed by, or connected to Tesla, Inc. or Elon Musk. Crypto can go to zero. Nothing here is financial advice. Always match the contract 0xtesla before you swap.</p>
+      <p>© 2026 TSI</p>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status">Contract copied</div>
+
+  <script>
+    const CA = "0xtesla";
+    const toast = document.getElementById("toast");
+    let toastTimer;
+
+    async function copyCA() {
+      try {
+        await navigator.clipboard.writeText(CA);
+      } catch (err) {
+        const area = document.createElement("textarea");
+        area.value = CA;
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand("copy");
+        area.remove();
+      }
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 1600);
+    }
+
+    document.getElementById("copy").addEventListener("click", copyCA);
+    document.getElementById("copy2").addEventListener("click", copyCA);
+    document.getElementById("copy3").addEventListener("click", copyCA);
+
+    const nav = document.getElementById("nav");
+    const links = document.getElementById("links");
+    const menu = document.getElementById("menu");
+    menu.addEventListener("click", () => {
+      const open = links.classList.toggle("open");
+      menu.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    links.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        links.classList.remove("open");
+        menu.setAttribute("aria-expanded", "false");
+      });
+    });
+    window.addEventListener("scroll", () => {
+      nav.classList.toggle("scrolled", window.scrollY > 8);
+    }, { passive: true });
+
+    const words = ["Learning", "Scanning", "Online", "Driving"];
+    let wordIndex = 0;
+    const signal = document.getElementById("signal");
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setInterval(() => {
+        wordIndex = (wordIndex + 1) % words.length;
+        signal.textContent = words[wordIndex];
+      }, 1800);
+    }
+
+    const canvas = document.getElementById("net");
+    const ctx = canvas.getContext("2d");
+    let nodes = [];
+    const motionOk = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const count = Math.min(90, Math.floor(window.innerWidth / 16));
+      nodes = Array.from({ length: count }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35
+      }));
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < nodes.length; i++) {
+        const a = nodes[i];
+        if (motionOk) {
+          a.x += a.vx;
+          a.y += a.vy;
+          if (a.x < 0 || a.x > canvas.width) a.vx *= -1;
+          if (a.y < 0 || a.y > canvas.height) a.vy *= -1;
+        }
+        for (let j = i + 1; j < nodes.length; j++) {
+          const b = nodes[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 140) {
+            ctx.strokeStyle = "rgba(225, 6, 0, " + (1 - dist / 140) * 0.35 + ")";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+        ctx.fillStyle = "rgba(255,255,255,0.8)";
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, 1.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      if (motionOk) requestAnimationFrame(draw);
+    }
+
+    resize();
+    draw();
+    window.addEventListener("resize", () => {
+      resize();
+      if (!motionOk) draw();
+    });
+  </script>
+</body>
+</html>
